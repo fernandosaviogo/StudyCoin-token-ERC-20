@@ -22,7 +22,7 @@ describe("StudyCoin", function () {
     it("Should have correct symbol", async function () {
       const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
       const symbol = await studyCoin.symbol();
-      expect(symbol).to.equal("SRC");
+      expect(symbol).to.equal("SDC");
     });
 
     it("Should have correct decimals", async function () {
@@ -35,5 +35,34 @@ describe("StudyCoin", function () {
       const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
       const totalSuplay = await studyCoin.totalSuplay();
       expect(totalSuplay).to.equal(1000n * 10n ** 18n);
+    });
+
+    it("Should get balance", async function () {
+      const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
+      const balance = await studyCoin.balanceOf(owner.address);
+      expect(balance).to.equal(1000n * 10n ** 18n);
+    });
+    
+    it("Should transfer", async function () {
+      const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
+      const balanceOwnerBefore = await studyCoin.balanceOf(owner.address);
+      const balanceOtherBefore = await studyCoin.balanceOf(otherAccount.address);
+
+      await studyCoin.transfer(otherAccount.address, 1n);
+
+      const balanceOwnerAfter = await studyCoin.balanceOf(owner.address);
+      const balanceOtherAfter = await studyCoin.balanceOf(otherAccount.address);
+      
+      expect(balanceOwnerBefore).to.equal(1000n * 10n ** 18n);
+      expect(balanceOtherBefore).to.equal(0);
+      expect(balanceOwnerAfter).to.equal((1000n * 10n ** 18n) - 1n);
+      expect(balanceOtherAfter).to.equal(1n);
+    });
+
+    it("Should NOT transfer", async function () {
+      const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
+      
+      const instance = studyCoin.connect(otherAccount);
+      await expect(instance.transfer(owner.address, 1n)).to.be.revertedWith("Insufficient balance");
     });
 });
