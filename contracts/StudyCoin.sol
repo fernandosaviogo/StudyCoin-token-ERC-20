@@ -17,6 +17,9 @@ contract StudyCoin {
     // Armazena o saldo dos portadores da moeda
     mapping (address => uint256) private _balances;
 
+    // Armazena as autorizações para transferencia 
+    mapping (address => mapping (address => uint256)) private _allowaces;
+
     // adiciona todas as moedas ao dono do contrato
     constructor(){
         _balances[msg.sender] = totalSuplay;
@@ -39,4 +42,17 @@ contract StudyCoin {
         return true;
     }
 
+    // Aprovação de quem vai fazer a transferencia delegada e a quantia
+    function approve(address _spender, uint256 _value) public returns (bool success){
+        _allowaces[msg.sender][_spender] = _value;
+
+        emit Approval(msg.sender, _spender, _value);
+
+        return true;
+    }
+
+    // Pesquisa as aprovações de tranferencias delegadas
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining){
+        return _allowaces[_owner][_spender];
+    }
 }

@@ -65,4 +65,13 @@ describe("StudyCoin", function () {
       const instance = studyCoin.connect(otherAccount);
       await expect(instance.transfer(owner.address, 1n)).to.be.revertedWith("Insufficient balance");
     });
+
+    it("Should approve", async function () {
+      const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
+      
+      await studyCoin.approve(otherAccount.address, 1n);
+
+      const value = await studyCoin.allowance(owner.address, otherAccount.address);
+      expect(value).to.equal(1n);
+    });
 });
