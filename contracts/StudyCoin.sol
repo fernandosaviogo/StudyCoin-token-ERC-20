@@ -55,4 +55,17 @@ contract StudyCoin {
     function allowance(address _owner, address _spender) public view returns (uint256 remaining){
         return _allowaces[_owner][_spender];
     }
+
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success){
+        require(balanceOf(_from) >= _value, "Insufficient balance");
+        require(allowance(_from, msg.sender) >= _value, "Insufficient allowance"); //verifica se o _from autorizou a quem chamou a função transferFrom a realizar a transferencia
+
+        _balances[_from] -= _value; // faz a dedução do valor da carteira
+        _allowaces[_from][msg.sender] -= _value; // faz a dedução do valor da permissão de transferencia
+        _balances[_to] += _value;
+
+        emit Transfer(_from, _to, _value);
+
+        return true;
+    }
 }

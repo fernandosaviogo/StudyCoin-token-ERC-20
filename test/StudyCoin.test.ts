@@ -68,10 +68,47 @@ describe("StudyCoin", function () {
 
     it("Should approve", async function () {
       const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
-      
+
       await studyCoin.approve(otherAccount.address, 1n);
 
       const value = await studyCoin.allowance(owner.address, otherAccount.address);
       expect(value).to.equal(1n);
+    });
+
+    it("Should transfer from", async function () {
+      const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
+      const balanceOwnerBefore = await studyCoin.balanceOf(owner.address);
+      const balanceOtherBefore = await studyCoin.balanceOf(otherAccount.address);
+
+      await studyCoin.approve(otherAccount.address, 10n);
+
+      const instance = studyCoin.connect(otherAccount);
+      await instance.transferFrom(owner.address, otherAccount.address, 5n);
+
+      const balanceOwnerAfter = await studyCoin.balanceOf(owner.address);
+      const balanceOtherAfter = await studyCoin.balanceOf(otherAccount.address);
+      const allowance = await studyCoin.allowance(owner.address, otherAccount.address);
+      
+      expect(balanceOwnerBefore).to.equal(1000n * 10n ** 18n);
+      expect(balanceOtherBefore).to.equal(0);
+      expect(balanceOwnerAfter).to.equal((1000n * 10n ** 18n) - 5n);
+      expect(balanceOtherAfter).to.equal(5n);
+      expect(allowance).to.equal(5n);
+    });
+
+    it("Should NOT transfer from (Insufficient balance)", async function () {
+      const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
+      
+      const instance = studyCoin.connect(otherAccount);
+      await expect(instance.transferFrom(otherAccount.address, otherAccount.address, 1n))
+        .to.be.revertedWith("Insufficient balance");
+    });
+
+    it("Should NOT transfer from (allowance)", async function () {
+      const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
+      
+      const instance = studyCoin.connect(otherAccount);
+      await expect(instance.transferFrom(owner.address, otherAccount.address, 1n))
+        .to.be.revertedWith("Insufficient allowance");
     });
 });
