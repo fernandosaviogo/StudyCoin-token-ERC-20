@@ -9,7 +9,7 @@ contract StudyCoin {
     string public name = "StudyCoin";
     string public symbol = "SDC";
     uint8 public decimals = 18;  // numero de casas decimais da moeda
-    uint256 public totalSuplay = 1000 * 10 ** decimals;
+    uint256 public totalSupply = 1000 * 10 ** decimals;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
@@ -22,7 +22,7 @@ contract StudyCoin {
 
     // adiciona todas as moedas ao dono do contrato
     constructor(){
-        _balances[msg.sender] = totalSuplay;
+        _balances[msg.sender] = totalSupply;
     }
 
     // busca o saldo da carteira

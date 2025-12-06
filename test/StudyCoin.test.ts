@@ -31,10 +31,10 @@ describe("StudyCoin", function () {
       expect(decimals).to.equal(18);
     });
 
-    it("Should have correct totalSuplay", async function () {
+    it("Should have correct totalSupply", async function () {
       const { studyCoin, owner, otherAccount } = await loadFixture(deployFixture);
-      const totalSuplay = await studyCoin.totalSuplay();
-      expect(totalSuplay).to.equal(1000n * 10n ** 18n);
+      const totalSupply = await studyCoin.totalSupply();
+      expect(totalSupply).to.equal(1000n * 10n ** 18n);
     });
 
     it("Should get balance", async function () {
